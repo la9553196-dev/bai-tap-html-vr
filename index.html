@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UI/UX Design - Trang Đăng Ký Người Dùng</title>
+    <style>
+      /* --- RESET & VARIABLES --- */
+      :root {
+        --primary-color: #2563eb;
+        --primary-hover: #1d4ed8;
+        --bg-color: #f1f5f9;
+        --card-bg: #ffffff;
+        --text-main: #0f172a;
+        --text-muted: #64748b;
+        --border-color: #cbd5e1;
+        --error-color: #ef4444;
+        --success-color: #10b981;
+        --radius: 10px;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+          Arial, sans-serif;
+      }
+
+      body {
+        background-color: var(--bg-color);
+        color: var(--text-main);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      /* --- CONTAINER CONTAINER (RESPONSIVE) --- */
+      .auth-card {
+        background-color: var(--card-bg);
+        width: 100%;
+        max-width: 440px;
+        padding: 32px 28px;
+        border-radius: var(--radius);
+        box-shadow:
+          0 10px 25px -5px rgba(0, 0, 0, 0.08),
+          0 8px 10px -6px rgba(0, 0, 0, 0.01);
+        transition: all 0.3s ease;
+      }
+
+      /* --- HEADER --- */
+      .auth-header {
+        text-align: center;
+        margin-bottom: 24px;
+      }
+
+      .auth-header h1 {
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--text-main);
+        margin-bottom: 6px;
+      }
+
+      .auth-header p {
+        font-size: 14px;
+        color: var(--text-muted);
+      }
+
+      /* --- FORM ELEMENTS --- */
+      .form-group {
+        margin-bottom: 18px;
+        position: relative;
+      }
+
+      .form-group label {
+        display: block;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text-main);
+        margin-bottom: 6px;
+      }
+
+      .input-wrapper {
+        position: relative;
+      }
+
+      .form-group input {
+        width: 100%;
+        height: 48px; /* Fitts' Law: Đủ lớn cho ngón tay chạm */
+        padding: 0 14px;
+        font-size: 15px;
+        border: 1.5px solid var(--border-color);
+        border-radius: 8px;
+        outline: none;
+        transition:
+          border-color 0.2s,
+          box-shadow 0.2s;
+        background-color: #fafafa;
+      }
+
+      .form-group input:focus {
+        border-color: var(--primary-color);
+        background-color: #ffffff;
+        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
+      }
+
+      .toggle-password {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: var(--text-muted);
+        font-size: 12px;
+        cursor: pointer;
+        font-weight: 600;
+      }
+
+      .error-message {
+        font-size: 12px;
+        color: var(--error-color);
+        margin-top: 4px;
+        display: none;
+      }
+
+      /* --- FITTS' LAW BUTTON --- */
+      .btn-submit {
+        width: 100%;
+        height: 50px; /* Target size lớn */
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        margin-top: 10px;
+        transition:
+          background-color 0.2s,
+          transform 0.1s;
+      }
+
+      .btn-submit:hover {
+        background-color: var(--primary-hover);
+      }
+
+      .btn-submit:active {
+        transform: scale(0.99);
+      }
+
+      /* --- FOOTER LINK --- */
+      .auth-footer {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 14px;
+        color: var(--text-muted);
+      }
+
+      .auth-footer a {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: 600;
+      }
+
+      /* --- MÀN HÌNH 2: XÁC NHẬN THÀNH CÔNG --- */
+      .screen-success {
+        display: none;
+        text-align: center;
+        padding: 10px 0;
+      }
+
+      .success-icon {
+        width: 72px;
+        height: 72px;
+        background-color: #d1fae5;
+        color: var(--success-color);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 36px;
+        margin: 0 auto 20px auto;
+      }
+
+      .email-highlight {
+        font-weight: 600;
+        color: var(--text-main);
+      }
+
+      /* MOBILE OPTIMIZATION */
+      @media (max-width: 480px) {
+        .auth-card {
+          padding: 24px 18px;
+          box-shadow: none;
+          background-color: transparent;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="auth-card">
+      <!-- ==================== MÀN HÌNH 1: FORM ĐĂNG KÝ ==================== -->
+      <div id="screen-form">
+        <div class="auth-header">
+          <h1>Tạo tài khoản mới</h1>
+          <p>Điền thông tin bên dưới để bắt đầu trải nghiệm</p>
+        </div>
+
+        <form id="registerForm" onsubmit="handleRegister(event)" novalidate>
+          <!-- Trường 1: Họ và tên -->
+          <div class="form-group">
+            <label for="fullName">Họ và tên *</label>
+            <input
+              type="text"
+              id="fullName"
+              placeholder="Ví dụ: Nguyễn Văn A"
+              required
+            />
+            <div class="error-message" id="nameError">
+              Vui lòng nhập họ và tên của bạn.
+            </div>
+          </div>
+
+          <!-- Trường 2: Email -->
+          <div class="form-group">
+            <label for="email">Địa chỉ Email *</label>
+            <input
+              type="email"
+              id="email"
+              placeholder="nguyenvana@gmail.com"
+              required
+            />
+            <div class="error-message" id="emailError">
+              Email không hợp lệ (ví dụ: name@domain.com).
+            </div>
+          </div>
+
+          <!-- Trường 3: Mật khẩu -->
+          <div class="form-group">
+            <label for="password">Mật khẩu *</label>
+            <div class="input-wrapper">
+              <input
+                type="password"
+                id="password"
+                placeholder="Tối thiểu 8 ký tự"
+                required
+              />
+              <button
+                type="button"
+                class="toggle-password"
+                onclick="togglePasswordVisibility('password', this)"
+              >
+                HIỆN
+              </button>
+            </div>
+            <div class="error-message" id="passError">
+              Mật khẩu phải có ít nhất 8 ký tự.
+            </div>
+          </div>
+
+          <!-- Trường 4: Xác nhận mật khẩu -->
+          <div class="form-group">
+            <label for="confirmPassword">Xác nhận mật khẩu *</label>
+            <div class="input-wrapper">
+              <input
+                type="password"
+                id="confirmPassword"
+                placeholder="Nhập lại mật khẩu"
+                required
+              />
+              <button
+                type="button"
+                class="toggle-password"
+                onclick="togglePasswordVisibility('confirmPassword', this)"
+              >
+                HIỆN
+              </button>
+            </div>
+            <div class="error-message" id="confirmPassError">
+              Mật khẩu xác nhận không khớp.
+            </div>
+          </div>
+
+          <!-- Nút Đăng ký (Fitts' Law) -->
+          <button type="submit" class="btn-submit">Đăng Ký Tài Khoản</button>
+        </form>
+
+        <div class="auth-footer">
+          Đã có tài khoản? <a href="#">Đăng nhập ngay</a>
+        </div>
+      </div>
+
+      <!-- ==================== MÀN HÌNH 2: XÁC NHẬN THÀNH CÔNG ==================== -->
+      <div id="screen-success" class="screen-success">
+        <div class="success-icon">✓</div>
+        <div class="auth-header">
+          <h1>Đăng ký thành công!</h1>
+          <p>
+            Chúng tôi đã gửi một thư xác nhận đến địa chỉ email
+            <span id="userEmailDisplay" class="email-highlight"></span>
+          </p>
+        </div>
+        <p
+          style="font-size: 14px; color: var(--text-muted); margin-bottom: 24px"
+        >
+          Vui lòng kiểm tra hộp thư (bao gồm cả thư rác) để hoàn tất kích hoạt
+          tài khoản.
+        </p>
+        <button class="btn-submit" onclick="resetForm()">
+          Chuyển Đến Trang Đăng Nhập
+        </button>
+      </div>
+    </div>
+
+    <!-- JavaScript Xử lý Luồng UI/UX & Validation -->
+    <script>
+      // Ẩn/Hiện Mật Khẩu
+      function togglePasswordVisibility(inputId, btn) {
+        const input = document.getElementById(inputId);
+        if (input.type === "password") {
+          input.type = "text";
+          btn.textContent = "ẨN";
+        } else {
+          input.type = "password";
+          btn.textContent = "HIỆN";
+        }
+      }
+
+      // Xử lý Kiểm tra Dữ liệu & Chuyển Trang
+      function handleRegister(e) {
+        e.preventDefault();
+
+        let isValid = true;
+        const name = document.getElementById("fullName").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value;
+        const confirmPassword =
+          document.getElementById("confirmPassword").value;
+
+        // Validate Name
+        if (!name) {
+          showError("nameError", true);
+          isValid = false;
+        } else {
+          showError("nameError", false);
+        }
+
+        // Validate Email
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+          showError("emailError", true);
+          isValid = false;
+        } else {
+          showError("emailError", false);
+        }
+
+        // Validate Password
+        if (password.length < 8) {
+          showError("passError", true);
+          isValid = false;
+        } else {
+          showError("passError", false);
+        }
+
+        // Validate Confirm Password
+        if (password !== confirmPassword || !confirmPassword) {
+          showError("confirmPassError", true);
+          isValid = false;
+        } else {
+          showError("confirmPassError", false);
+        }
+
+        // Chuyển sang Màn hình 2 nếu dữ liệu hợp lệ
+        if (isValid) {
+          document.getElementById("userEmailDisplay").textContent = email;
+          document.getElementById("screen-form").style.display = "none";
+          document.getElementById("screen-success").style.display = "block";
+        }
+      }
+
+      function showError(elementId, show) {
+        document.getElementById(elementId).style.display = show
+          ? "block"
+          : "none";
+      }
+
+      function resetForm() {
+        document.getElementById("registerForm").reset();
+        document.getElementById("screen-form").style.display = "block";
+        document.getElementById("screen-success").style.display = "none";
+      }
+    </script>
+  </body>
+</html>
